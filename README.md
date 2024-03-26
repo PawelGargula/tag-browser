@@ -1,5 +1,7 @@
 # Tag-browser
 
+## [Demo](https://pawelgargula.github.io/tag-browser/)
+
 ## Założenia projektu:
 
 - stronicowana tabela lub lista tagów wraz liczbą powiązanych postów (pole count)
