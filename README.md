@@ -1,6 +1,14 @@
 # Tag-browser
 
-## [Demo](https://pawelgargula.github.io/tag-browser/)
+## [Demo - GitHub pages](https://pawelgargula.github.io/tag-browser/)
+
+## Lokalnie
+
+1. git clone https://github.com/PawelGargula/tag-browser.git
+2. cd tag-browser
+3. npm ci
+4. npm start
+5. npm run storybook
 
 ## Założenia projektu:
 
