@@ -35,13 +35,24 @@ function App() {
       const order = sortModel[0]?.sort || 'desc';
       const sortField = !sortModel[0] || sortModel[0]?.field === 'count' ? 'popular' : sortModel[0]?.field;
       
-      const currentPageResponse = await fetch(`https://api.stackexchange.com/2.3/tags?page=${page}&pagesize=${pageSize}&order=${order}&sort=${sortField}&site=stackoverflow`)
-      const currentPageItems = (await currentPageResponse.json()).items || [];
-      const currentPageItemsWithIds = currentPageItems.map((item) => ({...item, id: item.name}));
+      try {
+        const [currentPageResponse, totalResponse] = await Promise.all([
+          fetch(`https://api.stackexchange.com/2.3/tags?page=${page}&pagesize=${pageSize}&order=${order}&sort=${sortField}&site=stackoverflow`),
+          fetch('https://api.stackexchange.com/2.3/tags?site=stackoverflow&filter=total')
+        ]);
 
-      const totalResponse = await fetch('https://api.stackexchange.com/2.3/tags?site=stackoverflow&filter=total');
-      const total = (await totalResponse.json()).total || 0;
-      setPageInfo((old) => ({ ...old, isLoading: false, rows: currentPageItemsWithIds, total: total }));
+        if (currentPageResponse.ok && totalResponse.ok) {
+          const currentPageItems = (await currentPageResponse.json()).items || [];
+          const currentPageItemsWithIds = currentPageItems.map((item) => ({...item, id: item.name}));
+          const total = (await totalResponse.json()).total || 0;
+          setPageInfo((old) => ({ ...old, isLoading: false, rows: currentPageItemsWithIds, total: total }));
+        } else {
+          throw new Error()
+        }
+      } catch (error) {
+          showNotification("Something went wrong while fetching tags. Try again later or contact with administrator.");
+          setPageInfo((old) => ({ ...old, isLoading: false }));
+      }
     }
     fetchData();
   }, [paginationModel, sortModel])
