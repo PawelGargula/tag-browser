@@ -27,6 +27,8 @@ function App() {
   });
 
   useEffect(() => {
+    let ignore = false;
+    
     const fetchData = async () => {
       setPageInfo((old) => ({ ...old, isLoading: true }));
       
@@ -45,7 +47,7 @@ function App() {
           const currentPageItems = (await currentPageResponse.json()).items || [];
           const currentPageItemsWithIds = currentPageItems.map((item) => ({...item, id: item.name}));
           const total = (await totalResponse.json()).total || 0;
-          setPageInfo((old) => ({ ...old, isLoading: false, rows: currentPageItemsWithIds, total: total }));
+          !ignore && setPageInfo((old) => ({ ...old, isLoading: false, rows: currentPageItemsWithIds, total: total }));
         } else {
           throw new Error()
         }
@@ -55,6 +57,10 @@ function App() {
       }
     }
     fetchData();
+
+    return () => {
+      ignore = true;
+    };
   }, [paginationModel, sortModel])
 
   return (
